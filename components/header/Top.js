@@ -9,17 +9,22 @@ const Top = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const user = {
+    nickname: "M74JJI",
+    avatar: "https://www.pngarts.com/files/5/User-Avatar-PNG-Transparent-Image.png"
+  };
+
   return (
     <div className={styles.top}>
       <div className={styles.top_container}>
         <div></div>
         <ul className={styles.top_list}>
           <li>
-            <img src="https://www.seekpng.com/png/full/323-3232715_morocco-flag-png-angel-tube-morocco.png" alt="Morocco flag" />
+            <img src="https://www.seekpng.com/png/full/323-3232715_morocco-flag-png-angel-tube-morocco.png" alt="Morocco flag" className={styles.flagIcon} />
             <span> Chisinau / md-leu</span>
           </li>
           <li>
-            <MdSecurity />
+            <MdSecurity className={styles.icon} />
             <span>Buyer Protection</span>
           </li>
           <li>
@@ -29,17 +34,27 @@ const Top = () => {
             <span>Help</span>
           </li>
           <li>
-            <BsSuitHeart />
+            <BsSuitHeart className={styles.icon} />
             <span>Wishlist</span>
           </li>
           <li
+            className={styles.account}
             onMouseEnter={() => setIsMenuOpen(true)}
             onMouseLeave={() => setIsMenuOpen(false)}
           >
             <div className={styles.flex}>
-              <RiAccountPinCircleLine />
-              <span>Account</span>
-              <RiArrowDropDownFill />
+              {loggedIn ? (
+                <>
+                  <img src={user.avatar} alt="User Avatar" className={styles.avatar} />
+                  <span>{user.nickname}</span>
+                </>
+              ) : (
+                <>
+                  <RiAccountPinCircleLine className={styles.icon} />
+                  <span>Account</span>
+                </>
+              )}
+              <RiArrowDropDownFill className={styles.icon} />
             </div>
             {isMenuOpen && <Account loggedIn={loggedIn} />}
           </li>

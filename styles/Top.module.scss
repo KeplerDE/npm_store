@@ -22,21 +22,53 @@
 .top_list li {
   display: flex;
   align-items: center;
-  position: relative; /* Добавлено для позиционирования меню */
+  position: relative;
+  padding: 10px;
+  border-radius: 4px;
+  transition: background-color 0.3s, box-shadow 0.3s;
 }
 
-.top_list img {
+.top_list li:hover {
+  background-color: #e9e9e9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.flagIcon {
   width: 24px;
   height: 24px;
   margin-right: 8px;
 }
 
-.top_list span {
-  font-size: 14px;
+.icon {
+  margin-right: 5px;
 }
 
 .flex {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.account {
+  cursor: pointer;
+}
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+/* Media queries for responsive design */
+@media (max-width: 768px) {
+  .top_list {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .top_list li {
+    width: 100%;
+    justify-content: space-between;
+  }
 }
