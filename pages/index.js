@@ -3,8 +3,10 @@ import axios from 'axios';
 import styles from '../styles/Home.module.scss';
 import Header from '../components/Header';
 import Footer from '@/components/Footer';
+import { useSession } from 'next-auth/react';
 
 export default function Home({ country }) {
+  const { data: session } = useSession();
   return (
     <div>
       <Header country={country}/>
@@ -13,7 +15,8 @@ export default function Home({ country }) {
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
       </main>
-      <Footer country={country}/>
+      {session ? "You are logged in" : "You are not logged in"}
+      <Footer country={country} />
     </div>
   );
 }
