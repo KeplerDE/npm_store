@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import styles from '../styles/Home.module.scss';
-import Header from '../components/header/Header';
+import Header from '../components/Header';
+import Footer from '@/components/Footer';
 
 export default function Home() {
   return (
@@ -11,6 +12,7 @@ export default function Home() {
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
       </main>
+      <Footer />
     </div>
   );
 }
