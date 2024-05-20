@@ -5,8 +5,8 @@ import { BsSuitHeart } from 'react-icons/bs';
 import { RiAccountPinCircleLine, RiArrowDropDownFill } from 'react-icons/ri';
 import Account from './Account';
 
-const Top = () => {
-  const [loggedIn, setLoggedIn] = useState(false);
+const Top = ({ country }) => {
+  const [loggedIn, setLoggedIn] = useState(false);  
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const user = {
@@ -20,8 +20,8 @@ const Top = () => {
         <div></div>
         <ul className={styles.top_list}>
           <li>
-            <img src="https://www.seekpng.com/png/full/323-3232715_morocco-flag-png-angel-tube-morocco.png" alt="Morocco flag" className={styles.flagIcon} />
-            <span> Chisinau / md-leu</span>
+            <img src={country.flag} alt="" className={styles.flagIcon} />
+            <span>{country.name}</span>
           </li>
           <li>
             <MdSecurity className={styles.icon} />

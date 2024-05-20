@@ -3,7 +3,7 @@ import Social from './Social';
 import Copyright from './Copyright';
 import styles from '@/styles/Footer.module.scss';
 
-const Footer = () => {
+const Footer = ({ country }) => {
   return (
     <div>
       <footer className={styles.footer}>
@@ -38,7 +38,7 @@ const Footer = () => {
         </div>
       </footer>
       <Social />
-      <Copyright />
+      <Copyright country={country}/>
     </div>
   );
 };

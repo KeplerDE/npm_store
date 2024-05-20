@@ -3,7 +3,7 @@ import Top from './Top';
 import Search from './Search';
 import styles from '@/styles/Header.module.scss';
 
-const Header = () => {
+const Header = ({ country }) => {
   const handleSearch = (query) => {
     console.log('Search query:', query);
   };
@@ -14,7 +14,7 @@ const Header = () => {
         <div className={styles.coupon}>
           <img src="/images/banner.png" alt="Coupon Banner" className={styles.couponImage} />
         </div>
-        <Top />
+        <Top country={country} />
         <Search onSearch={handleSearch} />
       </header>
     </div>

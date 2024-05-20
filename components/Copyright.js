@@ -1,7 +1,8 @@
 import React from 'react';
 import styles from '@/styles/Copyright.module.scss';
+import { IoLocationSharp } from 'react-icons/io5';
 
-const Copyright = () => {
+const Copyright = ({ country }) => {
   return (
     <div className={styles.copyright}>
       <div className={styles.paymentMethods}>
@@ -14,6 +15,10 @@ const Copyright = () => {
       </div>
       <div className={styles.rights}>
         <p>&copy; {new Date().getFullYear()} SHOPPAY All Rights Reserved.</p>
+      </div>
+      <div className={styles.country}>
+        <IoLocationSharp className={styles.icon} />
+        <span className={styles.countryName}>{country.name}</span>
       </div>
       <div className={styles.policies}>
         <a href="/privacy-center">Privacy Center</a> |
