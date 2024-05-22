@@ -4,15 +4,11 @@ import { MdSecurity } from 'react-icons/md';
 import { BsSuitHeart } from 'react-icons/bs';
 import { RiAccountPinCircleLine, RiArrowDropDownFill } from 'react-icons/ri';
 import Account from './Account';
+import { useSession } from 'next-auth/react';
 
 const Top = ({ country }) => {
-  const [loggedIn, setLoggedIn] = useState(false);  
+  const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const user = {
-    nickname: "M74JJI",
-    avatar: "https://www.pngarts.com/files/5/User-Avatar-PNG-Transparent-Image.png"
-  };
 
   return (
     <div className={styles.top}>
@@ -43,10 +39,10 @@ const Top = ({ country }) => {
             onMouseLeave={() => setIsMenuOpen(false)}
           >
             <div className={styles.flex}>
-              {loggedIn ? (
+              {session ? (
                 <>
                   <img src={user.avatar} alt="User Avatar" className={styles.avatar} />
-                  <span>{user.nickname}</span>
+                  <span>{session.user.name}</span>
                 </>
               ) : (
                 <>
@@ -56,7 +52,7 @@ const Top = ({ country }) => {
               )}
               <RiArrowDropDownFill className={styles.icon} />
             </div>
-            {isMenuOpen && <Account loggedIn={loggedIn} />}
+            {isMenuOpen && <Account loggedIn={session} />}
           </li>
         </ul>
       </div>
