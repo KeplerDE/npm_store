@@ -16,8 +16,7 @@ const Top = ({ country }) => {
         <div></div>
         <ul className={styles.top_list}>
           <li>
-            <img src={country.flag} alt="" className={styles.flagIcon} />
-            <span>{country.name}</span>
+            <img src=""alt="" className={styles.flagIcon} />
           </li>
           <li>
             <MdSecurity className={styles.icon} />
@@ -41,7 +40,7 @@ const Top = ({ country }) => {
             <div className={styles.flex}>
               {session ? (
                 <>
-                  <img src={user.avatar} alt="User Avatar" className={styles.avatar} />
+                  <img src="" alt="User Avatar" className={styles.avatar} />
                   <span>{session.user.name}</span>
                 </>
               ) : (

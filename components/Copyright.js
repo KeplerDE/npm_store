@@ -18,7 +18,7 @@ const Copyright = ({ country }) => {
       </div>
       <div className={styles.country}>
         <IoLocationSharp className={styles.icon} />
-        <span className={styles.countryName}>{country.name}</span>
+        {/* <span className={styles.countryName}>{country.name}</span> */}
       </div>
       <div className={styles.policies}>
         <a href="/privacy-center">Privacy Center</a> |
