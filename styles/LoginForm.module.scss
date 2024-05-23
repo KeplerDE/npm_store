@@ -1,11 +1,4 @@
-.container {
-    display: flex;
-    justify-content: space-around;
-    padding: 40px;
-    background-color: #f9f9f9;
-  }
-  
-  .signup_section {
+.login_section {
     width: 100%;
     max-width: 400px;
     padding: 20px;
@@ -14,6 +7,34 @@
     background-color: #fff;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     margin: 20px auto;
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .back_svg {
+    margin-right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  .text {
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .link {
+    margin-left: 5px;
+    color: #0070f3;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  .link:hover {
+    text-decoration: underline;
   }
   
   .title {
@@ -58,10 +79,30 @@
     background-color: #005bb5;
   }
   
-  .info_text {
-    font-size: 12px;
-    color: #777;
-    margin-bottom: 10px;
-    text-align: left;
+  .forgot_password, .or_continue {
+    font-size: 14px;
+    color: #0070f3;
+    cursor: pointer;
+    text-align: center;
+    margin-bottom: 20px;
   }
   
+  .oauth_button {
+    width: 100%;
+    padding: 12px;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    font-size: 16px;
+  }
+  
+  .google {
+    background-color: #DB4437;
+  }
+  
+  .facebook {
+    background-color: #4267B2;
+  }
+      
