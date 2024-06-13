@@ -4,6 +4,7 @@ import { connectDb } from '../../../utils/db';
 import User from '../../../models/User';
 import bcrypt from 'bcryptjs';
 import { createActivationToken } from '../../../utils/tokens';
+import { sendEmail } from '@/utils/sendEmails';
 
 const handler = nc();
 
@@ -36,6 +37,7 @@ handler.post(async (req, res) => {
       id: addedUser._id.toString(),
     });
     const url = `${process.env.BASE_URL}/activate/${activation_token}`;
+    sendEmail(email,url,"","Activate your account!")
     console.log(`Activation token: ${activation_token}, URL: ${url}`);
     res.send(url);
   } catch (error) {
