@@ -1,8 +1,11 @@
+// components/SignupForm.js
+
 import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import styles from '@/styles/SignupForm.module.scss';
+import { useRouter } from 'next/router';
 
 const SignupForm = () => {
   const [user, setUser] = useState({
@@ -14,6 +17,7 @@ const SignupForm = () => {
     error: ''
   });
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const { name, email, password, conf_password, success, error } = user;
 
@@ -38,6 +42,8 @@ const SignupForm = () => {
         password: values.password,
       });
       setUser({ ...user, success: 'Register success! Please activate your email to start.', error: '' });
+      // Redirect to profile page after successful registration and sign-in
+      router.push('/');
     } catch (error) {
       setUser({ ...user, success: '', error: error.response.data.message });
     }

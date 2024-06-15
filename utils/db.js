@@ -1,3 +1,5 @@
+// utils/db.js
+
 import mongoose from 'mongoose';
 
 let isConnected = false;
@@ -24,4 +26,14 @@ export async function connectDb() {
 
   isConnected = db.connections[0].readyState === 1;
   console.log('New connection to the database.');
+}
+
+export async function disconnectDb() {
+  if (isConnected) {
+    if (process.env.NODE_ENV === 'production') {
+      await mongoose.disconnect();
+      isConnected = false;
+      console.log('Disconnected from the database.');
+    }
+  }
 }

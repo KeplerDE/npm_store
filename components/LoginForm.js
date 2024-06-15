@@ -1,12 +1,62 @@
-import React from 'react';
+// components/LoginForm.js
+
+import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import Link from 'next/link';
 import { BiLeftArrowAlt } from 'react-icons/bi';
 import { signIn } from "next-auth/react";
+import { useRouter } from 'next/router';
 import styles from '@/styles/LoginForm.module.scss';
 
-const LoginForm = () => {
+const LoginForm = ({ title }) => {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState({
+    login_email: '',
+    login_password: '',
+    success: '',
+    error: ''
+  });
+
+  const { login_email, login_password, success, error } = user;
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUser({ ...user, [name]: value });
+  };
+
+  const loginValidation = Yup.object({
+    email: Yup.string().email('Enter a valid email address.').required('Email address is required.'),
+    password: Yup.string().required('Enter your password.')
+  });
+
+  const handleLogin = async (values, { setSubmitting }) => {
+    try {
+      setLoading(true);
+      const result = await signIn("credentials", {
+        redirect: false,
+        email: values.email,
+        password: values.password,
+      });
+
+      if (result.error) {
+        setUser({ ...user, error: result.error, success: '' });
+        setLoading(false);
+      } else {
+        setUser({ ...user, success: 'Login successful!', error: '' });
+        setLoading(false);
+        router.push('/'); 
+      }
+      setSubmitting(false);
+    } catch (error) {
+      console.error(error);
+      setUser({ ...user, error: 'Something went wrong.', success: '' });
+      setLoading(false);
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className={styles.login_section}>
       <div className={styles.header}>
@@ -14,37 +64,30 @@ const LoginForm = () => {
           <BiLeftArrowAlt />
         </div>
         <span className={styles.text}>
-          We'd be happy to join us! <Link href="/store" className={styles.link}>Go Store</Link>
+          We'd be happy to have you join us! <Link href="/store" className={styles.link}>Go to Store</Link>
         </span>
       </div>
-      <h1 className={styles.title}>Sign in</h1>
-      <p className={styles.subtitle}>Get access to one of the best Eshopping services in the world.</p>
+      <h1 className={styles.title}>{title}</h1>
+      <p className={styles.subtitle}>Get access to one of the best e-commerce services in the world.</p>
       <Formik
         initialValues={{ email: '', password: '' }}
-        validationSchema={Yup.object({
-          email: Yup.string().email('Invalid email address').required('Required'),
-          password: Yup.string().required('Required'),
-        })}
-        onSubmit={(values, { setSubmitting }) => {
-          // Вывод данных формы в консоль
-          console.log('User Data:', values);
-          setSubmitting(false);
-        }}
+        validationSchema={loginValidation}
+        onSubmit={handleLogin}
       >
         {({ isSubmitting }) => (
           <Form>
             <div>
-              <Field type="email" name="email" placeholder="Email Address" className={styles.input} />
+              <Field type="email" name="email" placeholder="Email address" className={styles.input} />
               <ErrorMessage name="email" component="div" className={styles.error} />
             </div>
             <div>
               <Field type="password" name="password" placeholder="Password" className={styles.input} />
               <ErrorMessage name="password" component="div" className={styles.error} />
             </div>
-            <button type="submit" disabled={isSubmitting} className={styles.button}>
+            <button type="submit" disabled={isSubmitting || loading} className={styles.button}>
               Sign in
             </button>
-            <p className={styles.forgot_password}>Forgot password ?</p>
+            <p className={styles.forgot_password}>Forgot password?</p>
             <p className={styles.or_continue}>Or continue with:</p>
             <button type="button" onClick={() => signIn("google")} className={`${styles.oauth_button} ${styles.google}`}>
               Sign in with Google
@@ -55,6 +98,8 @@ const LoginForm = () => {
           </Form>
         )}
       </Formik>
+      {success && <div className={styles.success}>{success}</div>}
+      {error && <div className={styles.error}>{error}</div>}
     </div>
   );
 };
