@@ -1,63 +1,123 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import axios from 'axios';
 import styles from '@/styles/SignupForm.module.scss';
 
 const SignupForm = () => {
+  const [user, setUser] = useState({
+    name: '',
+    email: '',
+    password: '',
+    conf_password: '',
+    success: '',
+    error: ''
+  });
+  const [loading, setLoading] = useState(false);
+
+  const { name, email, password, conf_password, success, error } = user;
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUser({ ...user, [name]: value });
+  };
+
+  const registerValidation = Yup.object({
+    name: Yup.string().required('Required'),
+    email: Yup.string().email('Invalid email address').required('Required'),
+    password: Yup.string().min(6, 'Must be at least 6 characters').required('Required'),
+    conf_password: Yup.string().oneOf([Yup.ref('password'), null], 'Passwords must match').required('Required')
+  });
+
+  const signUpHandler = async (values, { setSubmitting }) => {
+    setLoading(true);
+    try {
+      const { data } = await axios.post('/api/auth/signup', {
+        name: values.name,
+        email: values.email,
+        password: values.password,
+      });
+      setUser({ ...user, success: 'Register success! Please activate your email to start.', error: '' });
+    } catch (error) {
+      setUser({ ...user, success: '', error: error.response.data.message });
+    }
+    setLoading(false);
+    setSubmitting(false);
+  };
+
   return (
     <div className={styles.signup_section}>
       <h1 className={styles.title}>Sign Up</h1>
       <p className={styles.subtitle}>Get access to one of the best Eshopping services in the world.</p>
       <Formik
+        enableReinitialize
         initialValues={{
-          firstName: '',
-          fullName: '',
-          email: '',
-          password: '',
-          confirmPassword: ''
+          name,
+          email,
+          password,
+          conf_password
         }}
-        validationSchema={Yup.object({
-          firstName: Yup.string().required('Required'),
-          fullName: Yup.string().required('Required'),
-          email: Yup.string().email('Invalid email address').required('Required'),
-          password: Yup.string().min(6, 'Must be at least 6 characters').required('Required'),
-          confirmPassword: Yup.string()
-            .oneOf([Yup.ref('password'), null], 'Passwords must match')
-            .required('Required')
-        })}
-        onSubmit={(values, { setSubmitting }) => {
-          console.log('Signup Values:', values);
-          setSubmitting(false);
-        }}
+        validationSchema={registerValidation}
+        onSubmit={signUpHandler}
       >
         {({ isSubmitting }) => (
           <Form>
-            <div>
-              <Field type="text" name="firstName" placeholder="What's your First name?" className={styles.input} />
-              <ErrorMessage name="firstName" component="div" className={styles.error} />
+            <div className={styles.input_container}>
+              <Field
+                type="text"
+                name="name"
+                placeholder="Full Name"
+                className={styles.input}
+                onChange={handleChange}
+              />
+              <ErrorMessage name="name" component="div" className={styles.error} />
             </div>
-            <div>
-              <Field type="text" name="fullName" placeholder="Full Name" className={styles.input} />
-              <ErrorMessage name="fullName" component="div" className={styles.error} />
-            </div>
-            <p className={styles.info_text}>You'll need this when you log in and if you ever need to reset your password.</p>
-            <div>
-              <Field type="email" name="email" placeholder="Email Address" className={styles.input} />
+
+            <div className={styles.input_container}>
+              <Field
+                type="text"
+                name="email"
+                placeholder="Email Address"
+                className={styles.input}
+                onChange={handleChange}
+              />
               <ErrorMessage name="email" component="div" className={styles.error} />
             </div>
-            <p className={styles.info_text}>Enter a combination of at least six numbers, letters and punctuation marks(such as ! and &).</p>
-            <div>
-              <Field type="password" name="password" placeholder="Password" className={styles.input} />
+
+            <p className={styles.info_text}>
+              Enter a combination of at least six numbers, letters and punctuation marks (such as ! and &).
+            </p>
+
+            <div className={styles.input_container}>
+              <Field
+                type="password"
+                name="password"
+                placeholder="Password"
+                className={styles.input}
+                onChange={handleChange}
+              />
               <ErrorMessage name="password" component="div" className={styles.error} />
             </div>
-            <div>
-              <Field type="password" name="confirmPassword" placeholder="Confirm your password" className={styles.input} />
-              <ErrorMessage name="confirmPassword" component="div" className={styles.error} />
+
+            <div className={styles.input_container}>
+              <Field
+                type="password"
+                name="conf_password"
+                placeholder="Re-Type Password"
+                className={styles.input}
+                onChange={handleChange}
+              />
+              <ErrorMessage name="conf_password" component="div" className={styles.error} />
             </div>
-            <button type="submit" disabled={isSubmitting} className={styles.button}>Sign Up</button>
+
+            <button type="submit" className={styles.button} disabled={loading || isSubmitting}>
+              {loading ? 'Signing Up...' : 'Sign Up'}
+            </button>
           </Form>
         )}
       </Formik>
+      {success && <div className={styles.success}>{success}</div>}
+      {error && <div className={styles.error}>{error}</div>}
     </div>
   );
 };
