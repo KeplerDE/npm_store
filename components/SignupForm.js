@@ -1,11 +1,10 @@
-// components/SignupForm.js
-
 import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import styles from '@/styles/SignupForm.module.scss';
 import { useRouter } from 'next/router';
+import { signIn } from 'next-auth/react'; // Добавлено для аутентификации
 
 const SignupForm = () => {
   const [user, setUser] = useState({
@@ -41,13 +40,26 @@ const SignupForm = () => {
         email: values.email,
         password: values.password,
       });
-      setUser({ ...user, success: 'Register success! Please activate your email to start.', error: '' });
-      // Redirect to profile page after successful registration and sign-in
-      router.push('/');
+      setUser({ ...user, error: '', success: data.message });
+      setLoading(false);
+
+      // Вызов handleLogin из LoginForm для входа пользователя
+      const result = await signIn("credentials", {
+        redirect: false,
+        email: values.email,
+        password: values.password,
+      });
+
+      if (!result.error) {
+        router.push('/');
+      } else {
+        setUser({ ...user, error: result.error, success: '' });
+      }
+
     } catch (error) {
       setUser({ ...user, success: '', error: error.response.data.message });
+      setLoading(false);
     }
-    setLoading(false);
     setSubmitting(false);
   };
 

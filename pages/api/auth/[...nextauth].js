@@ -1,3 +1,5 @@
+// pages/api/auth/[...nextauth].js
+
 import NextAuth from "next-auth";
 import AppleProvider from "next-auth/providers/apple";
 import FacebookProvider from "next-auth/providers/facebook";
@@ -7,9 +9,7 @@ import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
 import clientPromise from "./lib/mongodb";
 import User from "../../../models/User";
 import bcrypt from "bcrypt";
-import { connectDb } from "../../../utils/db"; 
-
-connectDb();
+import { connectDb } from "../../../utils/db";
 
 const signInUser = async ({ password, user }) => {
   if (!user.password) {
@@ -46,6 +46,7 @@ export default NextAuth({
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials, req) {
+        await connectDb();
         const email = credentials.email;
         const password = credentials.password;
 
@@ -63,6 +64,14 @@ export default NextAuth({
   },
   session: {
     strategy: "jwt",
+  },
+  callbacks: {
+    async session({ session, token }) {
+      let user = await User.findById(token.sub);
+      session.user.id = token.sub || user._id.toString();
+      session.user.role = user.role || "user";
+      return session;
+    },
   },
   secret: process.env.JWT_SECRET,
 });
