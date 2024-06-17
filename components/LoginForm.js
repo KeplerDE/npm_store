@@ -1,15 +1,13 @@
-// components/LoginForm.js
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import Link from 'next/link';
 import { BiLeftArrowAlt } from 'react-icons/bi';
-import { signIn } from "next-auth/react";
+import { signIn, getCsrfToken, getProviders } from "next-auth/react";
 import { useRouter } from 'next/router';
 import styles from '@/styles/LoginForm.module.scss';
 
-const LoginForm = ({ title }) => {
+const LoginForm = ({ title, csrfToken, providers }) => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState({
@@ -38,6 +36,7 @@ const LoginForm = ({ title }) => {
         redirect: false,
         email: values.email,
         password: values.password,
+        csrfToken
       });
 
       if (result.error) {
@@ -76,6 +75,7 @@ const LoginForm = ({ title }) => {
       >
         {({ isSubmitting }) => (
           <Form>
+            <Field type="hidden" name="csrfToken" value={csrfToken} />
             <div>
               <Field type="email" name="email" placeholder="Email address" className={styles.input} />
               <ErrorMessage name="email" component="div" className={styles.error} />
@@ -89,12 +89,23 @@ const LoginForm = ({ title }) => {
             </button>
             <p className={styles.forgot_password}>Forgot password?</p>
             <p className={styles.or_continue}>Or continue with:</p>
-            <button type="button" onClick={() => signIn("google")} className={`${styles.oauth_button} ${styles.google}`}>
-              Sign in with Google
-            </button>
-            <button type="button" onClick={() => signIn("facebook")} className={`${styles.oauth_button} ${styles.facebook}`}>
-              Sign in with Facebook
-            </button>
+            <div className={styles.login_socials_wrap}>
+              {providers.map((provider) => {
+                if (provider.name === 'Credentials') {
+                  return null;
+                }
+                return (
+                  <button
+                    key={provider.name}
+                    type="button"
+                    onClick={() => signIn(provider.id)}
+                    className={`${styles.oauth_button} ${styles[provider.name.toLowerCase()]}`}
+                  >
+                    Sign in with {provider.name}
+                  </button>
+                );
+              })}
+            </div>
           </Form>
         )}
       </Formik>
