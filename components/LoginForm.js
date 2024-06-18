@@ -87,7 +87,9 @@ const LoginForm = ({ title, csrfToken, providers }) => {
             <button type="submit" disabled={isSubmitting || loading} className={styles.button}>
               Sign in
             </button>
-            <p className={styles.forgot_password}>Forgot password?</p>
+            <Link href="/auth/forgot">
+              <p className={styles.forgot_password}>Forgot password?</p>
+            </Link>
             <p className={styles.or_continue}>Or continue with:</p>
             <div className={styles.login_socials_wrap}>
               {providers.map((provider) => {
