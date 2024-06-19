@@ -9,6 +9,7 @@ import { createActivationToken } from '../../../utils/tokens';
 import { sendEmail } from '@/utils/sendEmails';
 import { getSession } from 'next-auth/react';
 import { signIn } from 'next-auth/react';
+import { activateEmailTemplate } from '@/emails/activateEmailTemplate';
 
 const handler = nc();
 
@@ -42,7 +43,7 @@ handler.post(async (req, res) => {
       id: addedUser._id.toString(),
     });
     const url = `${process.env.BASE_URL}/activate/${activation_token}`;
-    await sendEmail(email, url, "", "Activate your account!");
+    await sendEmail(email, url, "", "Activate your account!", activateEmailTemplate);
 
     // Automatically sign in the user
     const session = await getSession({ req });
