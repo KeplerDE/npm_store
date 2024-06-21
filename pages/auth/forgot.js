@@ -4,10 +4,10 @@ import Footer from "../../components/Footer";
 import { BiLeftArrowAlt, BiEnvelope, BiSend } from "react-icons/bi";
 import { useState } from "react";
 import * as Yup from "yup";
-import { Formik, Form } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import Link from 'next/link';
 
-export default function forgot() {
+export default function Forgot() {
     const [email, setEmail] = useState("");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
@@ -19,8 +19,28 @@ export default function forgot() {
             .required("You'll need this when you log in and if you ever need to reset your password.")
     });
 
-    const forgotHandler = async () => {
-        // Handler logic here
+    const forgotHandler = async (values) => {
+        setLoading(true);
+        setError("");
+        setSuccess("");
+        try {
+            const response = await fetch('/api/auth/forgot', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(values),
+            });
+            const data = await response.json();
+            if (response.ok) {
+                setSuccess(data.message);
+            } else {
+                setError(data.message);
+            }
+        } catch (err) {
+            setError('Something went wrong, please try again later.');
+        }
+        setLoading(false);
     };
 
     return (
@@ -32,28 +52,32 @@ export default function forgot() {
                     <p>Forgot your password? <Link href="/auth/signin"><span className={styles.loginInstead}>Login instead</span></Link></p>
                 </div>
                 <Formik
-                    enableReinitialize
                     initialValues={{ email }}
                     validationSchema={emailValidation}
                     onSubmit={forgotHandler}
                 >
-                    {() => (
+                    {({ handleChange }) => (
                         <Form className={styles.form}>
                             <div className={styles.inputGroup}>
                                 <BiEnvelope className={styles.icon} />
-                                <input
+                                <Field
                                     type="text"
                                     name="email"
                                     placeholder="Email Address"
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    onChange={(e) => {
+                                        handleChange(e);
+                                        setEmail(e.target.value);
+                                    }}
                                     className={styles.inputField}
                                 />
                                 <BiSend className={styles.sendIcon} />
                             </div>
-                            <button type="submit" className={styles.submitBtn}>
-                                Sign in <BiSend />
+                            <button type="submit" className={styles.submitBtn} disabled={loading}>
+                                {loading ? 'Sending...' : 'Sign in'} <BiSend />
                             </button>
+                            <ErrorMessage name="email" component="span" className={styles.error} />
                             {error && <span className={styles.error}>{error}</span>}
+                            {success && <span className={styles.success}>{success}</span>}
                         </Form>
                     )}
                 </Formik>

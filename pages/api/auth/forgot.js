@@ -1,12 +1,8 @@
 import nc from 'next-connect';
-import { validateEmail } from '../../../utils/validation';
 import { connectDb, disconnectDb } from '../../../utils/db';
 import User from '../../../models/User';
-import bcrypt from 'bcryptjs';
-import { createActivationToken, createResetToken } from '@/utils/tokens';
+import { createResetToken } from '@/utils/tokens';
 import { sendEmail } from '@/utils/sendEmails';
-import { getSession } from 'next-auth/react';
-import { signIn } from 'next-auth/react';
 import { resetEmailTemplate } from '@/emails/resetEmailTemplate';
 
 const handler = nc();
@@ -17,15 +13,31 @@ handler.post(async (req, res) => {
     const { email } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
-      return res.json({ message: "This email does not exist." });
+      await disconnectDb();
+      return res.status(400).json({ message: "This email does not exist." });
     }
+
+    const currentTime = Date.now();
+    const emailInterval = 24 * 60 * 60 * 1000; // 24 hours
+
+    if (user.lastEmailSent && currentTime - new Date(user.lastEmailSent).getTime() < emailInterval) {
+      await disconnectDb();
+      return res.status(200).json({ message: "An email has already been sent to this address. Please check your inbox." });
+    }
+
     const user_id = createResetToken({
       id: user._id.toString(),
     });
     const url = `${process.env.BASE_URL}/auth/reset/${user_id}`;
-    await sendEmail(email, url, "", "Activate your account.", resetEmailTemplate);
+
+    await sendEmail(email, url, "", "Reset your password", resetEmailTemplate);
+
+    // Update the last email sent time
+    user.lastEmailSent = new Date(currentTime);
+    await user.save();
+
     await disconnectDb();
-    res.json({
+    res.status(200).json({
       message: "An email has been sent to you, use it to reset your password.",
     });
   } catch (error) {

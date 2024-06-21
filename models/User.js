@@ -63,8 +63,11 @@ const userSchema = new mongoose.Schema({
       },
     },
   ],
-},
-{
+  lastEmailSent: {
+    type: Date,
+    default: null,
+  },
+}, {
   timestamps: true,
 });
 
