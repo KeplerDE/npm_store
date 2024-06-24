@@ -8,7 +8,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
 import clientPromise from "./lib/mongodb";
 import User from "../../../models/User";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { connectDb } from "../../../utils/db";
 
 const signInUser = async ({ password, user }) => {
