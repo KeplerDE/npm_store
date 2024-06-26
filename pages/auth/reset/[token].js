@@ -9,14 +9,16 @@ import * as Yup from "yup";
 import Link from "next/link";
 import ClipLoader from "react-spinners/ClipLoader";
 import axios from "axios";
+import jwt from 'jsonwebtoken';
 
-export default function ResetPassword({ token }) {
-    console.log("token", token)
+export default function ResetPassword({ user_id }) {
     const [password, setPassword] = useState("");
     const [conf_password, setConf_password] = useState("");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [loading, setLoading] = useState(false);
+
+    console.log("user_id:", user_id); // Проверка user_id
 
     const passwordValidation = Yup.object({
         password: Yup.string()
@@ -32,8 +34,10 @@ export default function ResetPassword({ token }) {
         try {
             setLoading(true);
             setError("");
-            // Ваш запрос на сброс пароля
-            const response = await axios.post(`/api/auth/reset/${token}`, { password });
+            const { data } = await axios.put("/api/auth/reset", {
+                user_id,
+                password,
+            });
             setLoading(false);
             setSuccess("Password reset successful!");
         } catch (error) {
@@ -99,9 +103,10 @@ export async function getServerSideProps(context) {
     const { query } = context;
     const token = query.token;
 
+    const user_id = jwt.verify(token, process.env.RESET_TOKEN_SECRET);
     return {
         props: {
-            token,
+            user_id,
         },
     };
 }
