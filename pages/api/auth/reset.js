@@ -1,30 +1,32 @@
-import dbConnect from "@/utils/dbConnect"; // Убедитесь, что у вас есть этот файл для подключения к базе данных
-import User from "@/models/User"; // Импорт модели пользователя
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import nc from 'next-connect';
+import { connectDb, disconnectDb } from '../../../utils/db';
+import User from '../../../models/User';
+import { createResetToken } from '@/utils/tokens';
+import { sendEmail } from '@/utils/sendEmails';
+import { resetEmailTemplate } from '@/emails/resetEmailTemplate';
 
-export default async function handler(req, res) {
-    if (req.method === "PUT") {
-        const { user_id, password } = req.body;
 
-        if (!user_id || !password) {
-            return res.status(400).json({ message: "User ID and password are required." });
-        }
 
-        await dbConnect();
+const handler = nc();
 
-        try {
-            const hashedPassword = await bcrypt.hash(password, 10);
-
-            await User.findByIdAndUpdate(user_id, {
-                password: hashedPassword,
-            });
-
-            res.status(200).json({ message: "Password reset successful!" });
-        } catch (error) {
-            res.status(500).json({ message: error.message });
-        }
-    } else {
-        res.status(405).json({ message: "Method not allowed." });
+handler.put(async (req, res) => {
+  try {
+    await db.connectDb();
+    const { user_id, password } = req.body;
+    const user = await User.findById(user_id);
+    if (!user) {
+      return res.status(400).json({ message: "This Account does not exist." });
     }
-}
+
+    const cryptedPassword = await bcrypt.hash(password, 12);
+    await user.updateOne({
+      password: cryptedPassword,
+    });
+    res.json({ email: user.email });
+    await db.disconnectDb();
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+export default handler;

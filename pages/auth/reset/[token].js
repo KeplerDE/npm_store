@@ -10,6 +10,9 @@ import Link from "next/link";
 import ClipLoader from "react-spinners/ClipLoader";
 import axios from "axios";
 import jwt from 'jsonwebtoken';
+import { getSession } from "next-auth/client"; // Added import for getSession
+import Router from 'next/router'; // Added import for Router
+import { signIn } from 'next-auth/client'; // Added import for signIn
 
 export default function ResetPassword({ user_id }) {
     const [password, setPassword] = useState("");
@@ -18,11 +21,11 @@ export default function ResetPassword({ user_id }) {
     const [success, setSuccess] = useState("");
     const [loading, setLoading] = useState(false);
 
-    console.log("user_id:", user_id); // Проверка user_id
+    console.log("user_id:", user_id); // Checking user_id
 
     const passwordValidation = Yup.object({
         password: Yup.string()
-            .required("Enter a combination of at least six numbers, letters and punctuation marks(such as ! and &).")
+            .required("Enter a combination of at least six numbers, letters, and punctuation marks (such as ! and &).")
             .min(6, "Password must be at least 6 characters.")
             .max(36, "Password can't be more than 36 characters"),
         conf_password: Yup.string()
@@ -38,7 +41,17 @@ export default function ResetPassword({ user_id }) {
                 user_id,
                 password,
             });
+
+            let options = {
+                redirect: false,
+                email: data.email,
+                password: password,
+            };
+
+            await signIn("credentials", options);
+            window.location.reload(true);
             setLoading(false);
+            Router.push("/");
             setSuccess("Password reset successful!");
         } catch (error) {
             setLoading(false);
@@ -88,7 +101,6 @@ export default function ResetPassword({ user_id }) {
                             <button type="submit" className={styles.button}>Change password</button>
                             <div style={{ marginTop: "10px" }}>
                                 {error && <span className={styles.error}>{error}</span>}
-                                {success && <span className={styles.success}>{success}</span>}
                             </div>
                         </Form>
                     )}
@@ -100,13 +112,22 @@ export default function ResetPassword({ user_id }) {
 }
 
 export async function getServerSideProps(context) {
-    const { query } = context;
+    const { query, req } = context;
+    const session = await getSession({ req });
+    if (session) {
+        return {
+            redirect: {
+                destination: "/",
+            },
+        };
+    }
     const token = query.token;
+    console.log("token", token);
 
     const user_id = jwt.verify(token, process.env.RESET_TOKEN_SECRET);
     return {
         props: {
-            user_id,
+            user_id: user_id.id, // assuming user_id contains an id property
         },
     };
 }
