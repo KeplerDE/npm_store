@@ -1,4 +1,9 @@
 .mySwiper {
+  .swiper {
+    border-radius: 10px !important;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    overflow: hidden;
+  }
   width: 100%;
   height: 300px; /* Установите нужную высоту */
 }
@@ -14,7 +19,7 @@
   align-items: center;
 }
 
-.swiper-slide img {
+.slideImage {
   display: block;
   width: 100%;
   height: 100%;

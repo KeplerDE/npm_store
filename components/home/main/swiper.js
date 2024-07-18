@@ -2,21 +2,31 @@ import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
-import { Navigation } from 'swiper/modules';
+import 'swiper/css/autoplay';
+import { Navigation, Autoplay } from 'swiper/modules';
 import styles from './swiper.module.scss';
+
+const imagePaths = [
+  '/images/swiper/1.jpg',
+  '/images/swiper/2.jpg',
+  '/images/swiper/3.jpg',
+  '/images/swiper/4.jpg',
+  '/images/swiper/5.jpg',
+];
 
 const MainSwiper = () => {
   return (
-    <Swiper navigation={true} modules={[Navigation]} className={styles.mySwiper}>
-      <SwiperSlide>Slide 1</SwiperSlide>
-      <SwiperSlide>Slide 2</SwiperSlide>
-      <SwiperSlide>Slide 3</SwiperSlide>
-      <SwiperSlide>Slide 4</SwiperSlide>
-      <SwiperSlide>Slide 5</SwiperSlide>
-      <SwiperSlide>Slide 6</SwiperSlide>
-      <SwiperSlide>Slide 7</SwiperSlide>
-      <SwiperSlide>Slide 8</SwiperSlide>
-      <SwiperSlide>Slide 9</SwiperSlide>
+    <Swiper
+      navigation={true}
+      modules={[Navigation, Autoplay]}
+      autoplay={{ delay: 3000, disableOnInteraction: false }}
+      className={styles.mySwiper}
+    >
+      {imagePaths.map((path, index) => (
+        <SwiperSlide key={index}>
+          <img src={path} alt={`Slide ${index + 1}`} className={styles.slideImage} />
+        </SwiperSlide>
+      ))}
     </Swiper>
   );
 };
