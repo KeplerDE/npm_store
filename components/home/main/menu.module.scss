@@ -1,0 +1,42 @@
+.menu {
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .menu__header {
+    display: flex;
+    align-items: center;
+    font-size: 1em;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .menu__header b {
+    margin-left: 5px;
+  }
+  
+  .menu__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .menu__item {
+    margin-bottom: 5px;
+  }
+  
+  .menu__link {
+    display: block;
+    padding: 5px 0;
+    color: #000;
+    text-decoration: none;
+    font-size: 0.9em;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .menu__link:hover {
+    background-color: #eee;
+  }
+  
